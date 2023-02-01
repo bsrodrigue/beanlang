@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/rodo/code/clox",
-      "program": "/home/rodo/code/clox/build/Debug/outDebug",
+      "cwd": "/home/rodo/code/interpreters/clox",
+      "program": "/home/rodo/code/interpreters/clox/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
