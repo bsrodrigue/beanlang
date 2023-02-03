@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "value.h"
+#include "rle.h"
 
 typedef enum
 {
@@ -17,6 +18,7 @@ typedef struct
     uint8_t *code;
     int *lines;
     ValueArray constants;
+    RLE rle;
 } Chunk;
 
 void initChunk(Chunk *chunk);

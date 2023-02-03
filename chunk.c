@@ -1,7 +1,7 @@
 #include <stdlib.h>
-
 #include "chunk.h"
 #include "memory.h"
+#include "rle.h"
 
 void initChunk(Chunk *chunk)
 {
@@ -10,6 +10,7 @@ void initChunk(Chunk *chunk)
     chunk->code = NULL;
     chunk->lines = NULL;
     initValueArray(&chunk->constants);
+    init_rle(&chunk->rle);
 }
 
 void freeChunk(Chunk *chunk)
@@ -32,6 +33,7 @@ void writeChunk(Chunk *chunk, uint8_t byte, int line)
 
     chunk->code[chunk->count] = byte;
     chunk->lines[chunk->count] = line;
+    push_rle(&chunk->rle, line);
     chunk->count++;
 }
 
