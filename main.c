@@ -13,14 +13,12 @@ int main(int argc, const char *argv[])
     int constant = addConstant(&chunk, 1.2);
 
     writeChunk(&chunk, OP_CONSTANT, 1);
-    writeChunk(&chunk, constant, 1);
-    writeChunk(&chunk, OP_RETURN, 1);
+    writeChunk(&chunk, constant, 32);
+    writeChunk(&chunk, OP_RETURN, 3);
 
-    print_rle(chunk.rle);
+    disassembleChunk(&chunk, "test chunk");
 
-    // disassembleChunk(&chunk, "test chunk");
-
-    // interpret(&chunk);
+    interpret(&chunk);
 
     freeVM();
     freeChunk(&chunk);

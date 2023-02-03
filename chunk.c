@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "chunk.h"
 #include "memory.h"
+#include "common.h"
 #include "rle.h"
 
 void initChunk(Chunk *chunk)
@@ -41,4 +42,11 @@ int addConstant(Chunk *chunk, Value value)
 {
     writeValueArray(&chunk->constants, value);
     return chunk->constants.count - 1;
+}
+
+int getLine(Chunk chunk, int position)
+{
+    int arr[chunk.rle.original_count];
+    expand_rle(&chunk.rle, arr, chunk.rle.original_count);
+    return arr[position];
 }
