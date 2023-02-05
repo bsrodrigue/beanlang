@@ -44,6 +44,17 @@ int addConstant(Chunk *chunk, Value value)
     return chunk->constants.count - 1;
 }
 
+// Do not forget to update what Value type evolves
+void writeConstant(Chunk *chunk, Value value, int line)
+{
+    int index = addConstant(chunk, value);
+    if (index >= 256)
+    {
+        writeChunk(chunk, index, line);
+        writeChunk(chunk, index, line);
+    }
+}
+
 int getLine(Chunk chunk, int position)
 {
     int arr[chunk.rle.original_count];
