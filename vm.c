@@ -103,6 +103,7 @@ static InterpretResult run()
 
 InterpretResult interpret(const char *source)
 {
+    // Generate bytecode for VM
     compile(source);
     return INTERPRET_OK;
 }

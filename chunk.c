@@ -44,7 +44,7 @@ int addConstant(Chunk *chunk, Value value)
     return chunk->constants.count - 1;
 }
 
-// Do not forget to update what Value type evolves
+// TODO: Exercise, add support for multi-byte operands
 void writeConstant(Chunk *chunk, Value value, int line)
 {
     int index = addConstant(chunk, value);
