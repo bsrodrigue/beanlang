@@ -2,29 +2,34 @@
 #define clox_chunk_h
 
 #include "common.h"
-#include "value.h"
 #include "rle.h"
+#include "value.h"
 
-typedef enum
-{
-    OP_CONSTANT,
-    // OP_CONSTANT_LONG,
-    OP_ADD,
-    OP_SUBTRACT,
-    OP_MULTIPLY,
-    OP_DIVIDE,
-    OP_NEGATE,
-    OP_RETURN,
+typedef enum {
+  OP_CONSTANT,
+  // OP_CONSTANT_LONG,
+  OP_NIL,
+  OP_TRUE,
+  OP_FALSE,
+  OP_EQUAL,
+  OP_GREATER,
+  OP_LESS,
+  OP_ADD,
+  OP_SUBTRACT,
+  OP_MULTIPLY,
+  OP_DIVIDE,
+  OP_NOT,
+  OP_NEGATE,
+  OP_RETURN,
 } OpCode;
 
-typedef struct
-{
-    int count;
-    int capacity;
-    uint8_t *code;
-    int *lines;
-    ValueArray constants;
-    RLE rle;
+typedef struct {
+  int count;
+  int capacity;
+  uint8_t *code;
+  int *lines;
+  ValueArray constants;
+  RLE rle;
 } Chunk;
 
 void initChunk(Chunk *chunk);
