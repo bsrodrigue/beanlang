@@ -4,7 +4,12 @@
 #include "chunk.h"
 #include "common.h"
 #include "compiler.h"
+#include "debug.h"
 #include "scanner.h"
+
+#ifdef DEBUG_PRINT_CODE
+#include "debug.h"
+#endif
 
 Parser parser;
 Chunk *compilingChunk;
@@ -81,7 +86,18 @@ static void emitConstant(Value value) {
   emitBytes(OP_CONSTANT, makeConstant(value));
 }
 
-static void endCompiler() { emitReturn(); }
+static void endCompiler() {
+#ifdef DEBUG_PRINT_CODE
+  if (!parser.hadError) {
+    disassembleChunk(currentChunk(), "code");
+  }
+#endif
+  emitReturn();
+}
+
+static void expression();
+static ParseRule *getRule(TokenType type);
+static void parsePrecedence(Precedence precedence);
 
 static void binary() {
   TokenType operatorType = parser.previous.type;
@@ -174,7 +190,20 @@ ParseRule rules[] = {
 };
 
 static void parsePrecedence(Precedence precedence) {
-  // What goes here?
+  advance();
+  ParseFn prefixRule = getRule(parser.previous.type)->prefix;
+  if (prefixRule == NULL) {
+    error("Expect expression.");
+    return;
+  }
+
+  prefixRule();
+
+  while (precedence <= getRule(parser.current.type)->precedence) {
+    advance();
+    ParseFn infixRule = getRule(parser.previous.type)->infix;
+    infixRule();
+  }
 }
 
 static ParseRule *getRule(TokenType type) { return &rules[type]; }
