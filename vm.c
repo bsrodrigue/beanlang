@@ -11,6 +11,8 @@
 #include "value.h"
 #include "vm.h"
 
+VM vm;
+
 static void resetStack() { vm.stackTop = vm.stack; }
 
 static void runtimeError(const char *format, ...) {
