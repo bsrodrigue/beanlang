@@ -7,6 +7,7 @@
 #include "debug.h"
 #include "memory.h"
 #include "object.h"
+#include "table.h"
 #include "value.h"
 #include "vm.h"
 
@@ -30,7 +31,10 @@ void initVM() {
   vm.objects = NULL;
 }
 
-void freeVM() { freeObjects(); }
+void freeVM() {
+  freeTable(&vm.strings);
+  freeObjects();
+}
 
 void push(Value value) {
   *vm.stackTop = value;
@@ -171,11 +175,14 @@ InterpretResult interpret(const char *source) {
   Chunk chunk;
   initChunk(&chunk);
 
+  // The compiler transforms the source code into bytecode and 'prints' it to
+  // the chunk
   if (!compile(source, &chunk)) {
     freeChunk(&chunk);
     return INTERPRET_COMPILE_ERROR;
   }
 
+  // The chunk is now filled with valid bytecode
   vm.chunk = &chunk;
   vm.ip = vm.chunk->code;
 
