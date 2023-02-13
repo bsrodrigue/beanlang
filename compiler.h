@@ -1,6 +1,7 @@
 #ifndef clox_compiler_h
 #define clox_compiler_h
 
+
 #include "object.h"
 #include "scanner.h"
 #include "vm.h"
@@ -26,6 +27,17 @@ typedef struct {
   ParseFn infix;
   Precedence precedence;
 } ParseRule;
+
+typedef struct {
+  Token name;
+  int depth;
+} Local;
+
+typedef struct {
+  Local locals[UINT8_COUNT];
+  int localCount;
+  int scopeDepth;
+} Compiler;
 
 typedef struct {
   Token current;
