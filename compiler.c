@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "chunk.h"
 #include "common.h"
@@ -114,7 +115,15 @@ static void endCompiler() {
 }
 
 static void beginScope() { current->scopeDepth++; }
-static void endScope() { current->scopeDepth--; }
+static void endScope() {
+  current->scopeDepth--;
+  while (current->localCount > 0 &&
+         current->locals[current->localCount - 1].depth > current->scopeDepth) {
+
+    emitByte(OP_POP);
+    current->localCount--;
+  }
+}
 
 static void expression();
 static void statement();
@@ -122,6 +131,7 @@ static void declaration();
 static ParseRule *getRule(TokenType type);
 static void parsePrecedence(Precedence precedence);
 static uint8_t identifierConstant(Token *name);
+static int resolveLocal(Compiler *compiler, Token *name);
 
 static void binary(bool canAssign) {
   TokenType operatorType = parser.previous.type;
@@ -196,13 +206,23 @@ static void string(bool canAssign) {
 }
 
 static void namedVariable(Token name, bool canAssign) {
-  uint8_t arg = identifierConstant(&name);
+  uint8_t getOp, setOp;
+  int arg = resolveLocal(current, &name);
+
+  if (arg != -1) {
+    getOp = OP_GET_LOCAL;
+    setOP = OP_SET_LOCAL;
+  } else {
+    arg = identifierConstant(&name);
+    getOp = OP_GET_GLOBAL;
+    setOP = OP_SET_GLOBAL;
+  }
 
   if (canAssign && match(TOKEN_EQUAL)) {
     expression();
-    emitBytes(OP_SET_GLOBAL, arg);
+    emitBytes(setOp, (uint8_t)arg);
   } else {
-    emitBytes(OP_GET_GLOBAL, arg);
+    emitBytes(getOp, (uint8_t)arg);
   }
 }
 
@@ -296,6 +316,24 @@ static uint8_t identifierConstant(Token *name) {
   return makeConstant(OBJ_VAL(copyString(name->start, name->length)));
 }
 
+static bool indentifiersEqual(Token *a, Token *b) {
+  if (a->length != b->length)
+    return false;
+  return memcmp(a->start, b->start, a->length) == 0;
+}
+
+static int resolveLocal(Compiler *compiler, Token *name) {
+  for (int i = compiler->localCount - 1; i >= 0; i--) {
+    Local *local = &compiler->locals[i];
+
+    if (indentifiersEqual(name, &local->name)) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
 static void addLocal(Token name) {
   if (current->localCount == UINT8_COUNT) {
     error("Too many local variables in function.");
@@ -307,11 +345,27 @@ static void addLocal(Token name) {
   local->depth = current->scopeDepth;
 }
 
+// Declare a local variable
 static void declareVariable() {
+
+  // If scope depth is 0 it means we are in the global scope
   if (current->scopeDepth == 0)
     return;
 
   Token *name = &parser.previous;
+
+  for (int i = current->localCount - 1; i >= 0; i--) {
+    Local *local = &current->locals[i];
+
+    if (local->depth != -1 && local->depth < current->scopeDepth) {
+      break;
+    }
+
+    if (identifierEqual(name, &local->name)) {
+      error("Already a variable with this name in this scope.");
+    }
+  }
+
   addLocal(*name);
 }
 

@@ -1,4 +1,5 @@
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -124,6 +125,16 @@ static InterpretResult run() {
     case OP_POP:
       pop();
       break;
+    case OP_GET_LOCAL: {
+        uint8_t slot = READ_BYTE();
+        push(vm.stack[slot]);
+        break;
+      }
+    case OP_SET_LOCAL: {
+        uint8_t slot = READ_BYTE();
+        vm.stack[slot] = peek(0);
+        break;
+      }
     case OP_GET_GLOBAL: {
       ObjString *name = READ_STRING();
       Value value;
