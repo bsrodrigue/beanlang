@@ -1,0 +1,5 @@
+var name = "rachid";
+var age = 24;
+
+if (age >= 18) print "You are an adult" + name;
+else print "You are a minor";
