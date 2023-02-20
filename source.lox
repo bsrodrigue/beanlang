@@ -1,5 +1,22 @@
-var name = "rachid";
-var age = 24;
+{
+  var a = 1;
+  {
+    var b = 2;
+    {
+      var c = 3;
+      var d = 3;
+      var e = 3;
 
-if (age >= 18) print "You are an adult" + name;
-else print "You are a minor";
+      print a;
+      print b;
+      print c;
+      print d + 1;
+    }
+
+    {
+      var alpha_c = 33;
+      print alpha_c;
+    }
+  }
+}
+

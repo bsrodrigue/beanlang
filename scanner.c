@@ -121,6 +121,7 @@ static TokenType checkKeyword(int start, int length, const char *rest, TokenType
     return TOKEN_IDENTIFIER;
 }
 
+// TODO: Try to implement such a thing in a separate environment.
 static TokenType identifierType()
 {
     switch (scanner.start[0])
@@ -158,8 +159,7 @@ static TokenType identifierType()
     case 's':
         return checkKeyword(1, 4, "uper", TOKEN_SUPER);
     case 't':
-        if (scanner.current - scanner.start > 1)
-        {
+        if (scanner.current - scanner.start > 1) {
             switch (scanner.start[1])
             {
             case 'h':
