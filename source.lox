@@ -1,22 +1,12 @@
 {
   var a = 1;
   {
-    var b = 2;
-    {
-      var c = 3;
-      var d = 3;
-      var e = 3;
+    var b;
+    var c;
+    var d;
 
-      print a;
-      print b;
-      print c;
-      print d + 1;
-    }
-
-    {
-      var alpha_c = 33;
-      print alpha_c;
-    }
+    var e = 2;
+    print e;
   }
 }
 

@@ -4,6 +4,7 @@
 #include "object.h"
 #include "scanner.h"
 #include "vm.h"
+#include <stdint.h>
 
 typedef enum {
   PREC_NONE,
@@ -30,7 +31,13 @@ typedef struct {
 typedef struct {
   Token name;
   int depth;
+  bool isCaptured;
 } Local;
+
+typedef struct {
+  uint8_t index;
+  bool isLocal;
+} Upvalue;
 
 typedef enum {
   TYPE_FUNCTION,
@@ -43,6 +50,7 @@ typedef struct Compiler {
   FunctionType type;
   Local locals[UINT8_COUNT];
   int localCount;
+  Upvalue upvalues[UINT8_COUNT];
   int scopeDepth;
 } Compiler;
 
