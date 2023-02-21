@@ -14,6 +14,8 @@ typedef enum {
   VAL_OBJ,
 } ValueType;
 
+// Representation of a Clox value. obj is an interface to Object types such as
+// String, Function, Class, etc
 typedef struct {
   ValueType type;
   union {

@@ -116,7 +116,8 @@ static bool callValue(Value callee, int argCount) {
       return true;
     }
     case OBJ_FUNCTION:
-      return call(AS_FUNCTION(callee), argCount);
+      // TODO: Make sure this is the right type
+      return call(AS_CLOSURE(callee), argCount);
     default:
       break;
     }
@@ -349,6 +350,7 @@ static InterpretResult run() {
       frame->ip -= offset;
       break;
     }
+    // It triggers the callable
     case OP_CALL: {
       int argCount = READ_BYTE();
       if (!callValue(peek(argCount), argCount)) {

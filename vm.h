@@ -15,6 +15,9 @@ typedef struct {
   Value *slots;
 } CallFrame;
 
+// Clox Stack-Based Virtual Machine.
+// Only global values and strings are stored in the Hashtables.
+// String Interning is useful to save memory by avoiding duplication. Each string in Lox must be registered.
 typedef struct {
   CallFrame frames[FRAMES_MAX];
   int frameCount;

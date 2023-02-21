@@ -810,6 +810,8 @@ static void statement() {
 // instruction
 ObjFunction *compile(const char *source) {
   initScanner(source);
+
+  // The top level compiler
   Compiler compiler;
   initCompiler(&compiler, TYPE_SCRIPT);
 

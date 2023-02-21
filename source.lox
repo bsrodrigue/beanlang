@@ -1,12 +1,11 @@
-{
-  var a = 1;
-  {
-    var b;
-    var c;
-    var d;
-
-    var e = 2;
-    print e;
+fun main(){
+  fun create_rachid(){
+    var age = 24;
+    var name = "Rachid";
+    var male = true;
   }
+
+  create_rachid();
 }
 
+main();
