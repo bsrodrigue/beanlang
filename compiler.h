@@ -62,5 +62,6 @@ typedef struct {
 } Parser;
 
 ObjFunction *compile(const char *source);
+void markCompilerRoots();
 
 #endif

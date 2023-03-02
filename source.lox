@@ -1,11 +1,6 @@
-fun main(){
-  fun create_rachid(){
-    var age = 24;
-    var name = "Rachid";
-    var male = true;
-  }
+var a ="first value";
 
-  create_rachid();
-}
+a = "updated";
 
-main();
+// GC here;
+print ;

@@ -7,6 +7,7 @@
 #include "common.h"
 #include "compiler.h"
 #include "debug.h"
+#include "memory.h"
 #include "object.h"
 #include "scanner.h"
 #include "value.h"
@@ -293,6 +294,7 @@ static void namedVariable(Token name, bool canAssign) {
   uint8_t getOp, setOp;
   int arg = resolveLocal(current, &name);
 
+  // Found variable as a local
   if (arg != -1) {
     getOp = OP_GET_LOCAL;
     setOp = OP_SET_LOCAL;
@@ -827,4 +829,12 @@ ObjFunction *compile(const char *source) {
 
   ObjFunction *function = endCompiler();
   return parser.hadError ? NULL : function;
+}
+
+void markCompilerRoots() {
+  Compiler *compiler = current;
+  while (compiler != NULL) {
+    markObject((Obj *)compiler->function);
+    compiler = compiler->enclosing;
+  }
 }
