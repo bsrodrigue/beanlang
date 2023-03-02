@@ -12,13 +12,22 @@
 #include <stdio.h>
 #endif /* DEBUG_LOG_GC */
 
+#define GC_HEAP_GROW_FACTOR 2
+
 static void markRoots();
+static void traceReferences();
+static void sweep();
 
 void *reallocate(void *pointer, size_t oldSize, size_t newSize) {
+  vm.bytesAllocated += newSize - oldSize;
   if (newSize > oldSize) {
 #ifdef DEBUG_STRESS_GC
     collectGarbage();
 #endif /* DEBUG_STRESS_GC */
+
+    if (vm.bytesAllocated > vm.nextGC) {
+      collectGarbage();
+    }
   }
 
   if (newSize == 0) {
@@ -137,13 +146,20 @@ static void freeObject(Obj *object) {
 void collectGarbage() {
 #ifdef DEBUG_LOG_GC
   printf("-- gc begin\n");
+  size_t before = vm.bytesAllocated;
 #endif /* DEBUG_LOG_GC */
 
   markRoots();
   traceReferences();
+  tableRemoveWhite(&vm.strings);
+  sweep();
+
+  vm.nextGC = vm.bytesAllocated * GC_HEAP_GROW_FACTOR;
 
 #ifdef DEBUG_LOG_GC
   printf("-- gc end\n");
+  printf("   collected %zu bytes (from %zu to %zu) next at %zu\n",
+         before - vm.bytesAllocated, before, vm.bytesAllocated, vm.nextGC);
 #endif /* DEBUG_LOG_GC */
 }
 
@@ -180,5 +196,29 @@ static void traceReferences() {
   while (vm.grayCount > 0) {
     Obj *object = vm.grayStack[--vm.grayCount];
     blackenObject(object);
+  }
+}
+
+static void sweep() {
+  Obj *previous = NULL;
+  Obj *object = vm.objects;
+
+  while (object != NULL) {
+    if (object->isMarked) {
+      object->isMarked = false;
+      previous = object;
+      object = object->next;
+    } else {
+      Obj *unreached = object;
+      object = object->next;
+
+      // Unlink the unreached and relink previous with next
+      if (previous != NULL) {
+        previous->next = object;
+      } else {
+        vm.objects = object;
+      }
+      freeObject(unreached);
+    }
   }
 }

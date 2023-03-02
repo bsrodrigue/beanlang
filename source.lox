@@ -1,6 +1,7 @@
-var a ="first value";
+var string = "a";
 
-a = "updated";
 
-// GC here;
-print ;
+while (true) {
+  string = string + "_a";
+  print string;
+}
