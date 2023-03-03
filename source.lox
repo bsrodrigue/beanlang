@@ -1,7 +1,8 @@
-var string = "a";
+class Character{}
 
+var rachid = Character();
 
-while (true) {
-  string = string + "_a";
-  print string;
-}
+rachid.name = "Rachid";
+
+print rachid.name;
+
