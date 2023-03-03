@@ -302,6 +302,7 @@ static void string(bool canAssign) {
       copyString(parser.previous.start + 1, parser.previous.length - 2)));
 }
 
+// Loads variable to the stack
 static void namedVariable(Token name, bool canAssign) {
   uint8_t getOp, setOp;
   int arg = resolveLocal(current, &name);
@@ -625,16 +626,34 @@ static void function(FunctionType type) {
   }
 }
 
+static void method() {
+  consume(TOKEN_IDENTIFIER, "Expect method name.");
+  uint8_t constant = identifierConstant(&parser.previous);
+
+  FunctionType type = TYPE_FUNCTION;
+  function(type);
+
+  emitBytes(OP_METHOD, constant);
+}
+
 static void classDeclaration() {
   consume(TOKEN_IDENTIFIER, "Expect class name.");
+  Token className = parser.previous;
   uint8_t nameConstant = identifierConstant(&parser.previous);
   declareVariable();
 
   emitBytes(OP_CLASS, nameConstant);
   defineVariable(nameConstant);
 
+  namedVariable(className, false);
   consume(TOKEN_LEFT_BRACE, "Expect '{' before class body.");
+
+  while (!check(TOKEN_RIGHT_BRACE) && !check(TOKEN_EOF)) {
+    method();
+  }
+
   consume(TOKEN_RIGHT_BRACE, "Expect '}' after class body.");
+  emitByte(OP_POP);
 }
 
 static void funDeclaration() {
