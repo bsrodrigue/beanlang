@@ -1,14 +1,1 @@
-fun main(){
-  var waifu = "aqua";
-
-  // Closure
-  fun showWaifu(){
-    print waifu;
-  }
-
-  return showWaifu;
-}
-
-var showWaifu = main();
-
-showWaifu();
+var arr = [1,3,4];
