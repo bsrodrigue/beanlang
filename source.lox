@@ -1,8 +1,14 @@
-class Character{}
+fun main(){
+  var waifu = "aqua";
 
-var rachid = Character();
+  // Closure
+  fun showWaifu(){
+    print waifu;
+  }
 
-rachid.name = "Rachid";
+  return showWaifu;
+}
 
-print rachid.name;
+var showWaifu = main();
 
+showWaifu();

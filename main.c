@@ -18,10 +18,6 @@ static void repl() {
       break;
     }
 
-    // Exits the repl
-    if (strcmp(line, "exit;") == 0)
-      break;
-
     interpret(line);
   }
 }

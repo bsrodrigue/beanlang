@@ -41,6 +41,8 @@ typedef struct {
 
 typedef enum {
   TYPE_FUNCTION,
+  TYPE_INITIALIZER,
+  TYPE_METHOD,
   TYPE_SCRIPT,
 } FunctionType;
 
@@ -53,6 +55,11 @@ typedef struct Compiler {
   Upvalue upvalues[UINT8_COUNT];
   int scopeDepth;
 } Compiler;
+
+typedef struct ClassCompiler {
+  struct ClassCompiler *enclosing;
+  bool hasSuperclass;
+} ClassCompiler;
 
 typedef struct {
   Token current;
