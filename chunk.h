@@ -28,6 +28,7 @@ typedef enum {
   OP_CALL,
   OP_INVOKE,
   OP_CLOSURE,
+  OP_ARRAY,
   OP_CLOSE_UPVALUE,
   OP_RETURN,
   OP_CLASS,

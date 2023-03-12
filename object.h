@@ -15,6 +15,7 @@
 #define IS_INSTANCE(value) isObjType(value, OBJ_INSTANCE)
 #define IS_NATIVE(value) isObjType(value, OBJ_NATIVE)
 #define IS_STRING(value) isObjType(value, OBJ_STRING)
+#define IS_ARRAY(value) isObjType(value, OBJ_ARRAY)
 
 #define AS_BOUND_METHOD(value) ((ObjBoundMethod *)AS_OBJ(value))
 #define AS_CLASS(value) ((ObjClass *)AS_OBJ(value))
@@ -24,6 +25,7 @@
 #define AS_NATIVE(value) (((ObjNative *)AS_OBJ(value))->function)
 #define AS_STRING(value) ((ObjString *)AS_OBJ(value))
 #define AS_CSTRING(value) (((ObjString *)AS_OBJ(value))->chars)
+#define AS_ARRAY(value) ((ObjArray *)AS_OBJ(value))
 
 typedef enum {
   OBJ_BOUND_METHOD,
@@ -33,7 +35,8 @@ typedef enum {
   OBJ_INSTANCE,
   OBJ_NATIVE,
   OBJ_STRING,
-  OBJ_UPVALUE
+  OBJ_UPVALUE,
+  OBJ_ARRAY,
 } ObjType;
 
 struct Obj {
@@ -96,11 +99,17 @@ typedef struct {
   ObjClosure *method;
 } ObjBoundMethod;
 
+typedef struct {
+  Obj obj;
+  ValueArray elements;
+} ObjArray;
+
 ObjBoundMethod *newBoundMethod(Value receiver, ObjClosure *method);
 ObjClass *newClass(ObjString *name);
 ObjClosure *newClosure(ObjFunction *function);
 ObjFunction *newFunction();
 ObjInstance *newInstance(ObjClass *klass);
+ObjArray *newArray();
 ObjNative *newNative(NativeFn function);
 ObjString *takeString(char *chars, int length);
 ObjString *copyString(const char *chars, int length);

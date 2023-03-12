@@ -563,6 +563,21 @@ static InterpretResult run() {
       break;
     }
 
+    case OP_ARRAY: {
+      int indice = AS_NUMBER(READ_CONSTANT());
+      ObjArray *array = newArray();
+      for (int i = indice - 1; i >= 0; i--) {
+        Value element = peek(i);
+        writeValueArray(&array->elements, element);
+      }
+
+      for (int i = 0; i < indice; i++)
+        pop();
+
+      push(OBJ_VAL(array));
+      break;
+    }
+
     case OP_METHOD:
       defineMethod(READ_STRING());
       break;

@@ -397,6 +397,26 @@ static void this_(bool canAssign) {
   variable(false);
 }
 
+static void array(bool canAssign) {
+  uint8_t elementCount = 0;
+
+  if (!check(TOKEN_RIGHT_BRACKET)) {
+    do {
+      expression();
+
+      if (elementCount == 255) {
+        error("Cannot have more than 255 elements");
+      }
+
+      elementCount++;
+    } while (match(TOKEN_COMMA));
+  }
+
+  consume(TOKEN_RIGHT_BRACKET, "Expect ']' after array elements.");
+
+  emitBytes(OP_ARRAY, makeConstant(NUMBER_VAL(elementCount)));
+}
+
 static void unary(bool canAssign) {
   TokenType operatorType = parser.previous.type;
 
@@ -417,8 +437,13 @@ static void unary(bool canAssign) {
 ParseRule rules[] = {
     [TOKEN_LEFT_PAREN] = {grouping, call, PREC_CALL},
     [TOKEN_RIGHT_PAREN] = {NULL, NULL, PREC_NONE},
+
     [TOKEN_LEFT_BRACE] = {NULL, NULL, PREC_NONE},
     [TOKEN_RIGHT_BRACE] = {NULL, NULL, PREC_NONE},
+
+    [TOKEN_LEFT_BRACKET] = {array, NULL, PREC_NONE},
+    [TOKEN_RIGHT_BRACKET] = {NULL, NULL, PREC_NONE},
+
     [TOKEN_COMMA] = {NULL, NULL, PREC_NONE},
     [TOKEN_DOT] = {NULL, dot, PREC_CALL},
     [TOKEN_MINUS] = {unary, binary, PREC_TERM},
