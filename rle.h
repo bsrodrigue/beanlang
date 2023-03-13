@@ -1,6 +1,9 @@
 #ifndef clox_rle_h
 #define clox_rle_h
 
+#include <stdio.h>
+#include <stdlib.h>
+
 typedef struct
 {
     int last_number;
